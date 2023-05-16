@@ -12,19 +12,20 @@ node( 'built-in' ) {
 
   if ( env?.GITHUB_PR_TARGET_BRANCH ?: false ) {
 
-    githubPRComment comment: githubPRMessage( "Build #${env.BUILD_NUMBER} marked as ${currentBuild.currentResult}" +
+    gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
+    githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} in build #${env.BUILD_NUMBER} marked as ${currentBuild.currentResult}" +
                                               "<details><summary>Details</summary><p>[Jenkins Build](${env.BUILD_URL})</p></details>"
                                             ),
                     errorHandler: statusOnPublisherError( 'UNSTABLE' )
 
-    githubPRAddLabels errorHandler: statusOnPublisherError( 'UNSTABLE' ), labelProperty: labels( 'approved' )
+    githubPRAddLabels errorHandler: statusOnPublisherError( 'UNSTABLE' ), labelProperty: labels( 'verified' )
 
     githubPRStatusPublisher buildMessage: message( failureMsg: githubPRMessage('Build failed.  (Status set failed.)'),
                                                    successMsg: githubPRMessage('Build succeeded. (Status set Success.)')
                                           ),
-                            errorHandler: statusOnPublisherError( 'UNSTABLE' ),
-                            statusMsg: githubPRMessage( ('SUCCESS' == currentBuild.currentResult) ? "Successful in ${currentBuild.durationString}" : "Build failed in #${env.BUILD_NUMBER}" ),
-                            unstableAs: 'FAILURE'
+                            statusMsg: githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
+    gitHubPRStatus githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
+
 
     // gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
     // githubPRComment comment: githubPRMessage( "#${env.BUILD_NUMBER} ${currentBuild.currentResult}" )
@@ -33,3 +34,12 @@ node( 'built-in' ) {
   }
 }
 
+// void setBuildStatus( String message, String state ) {
+//   step([
+//       $class: "GitHubCommitStatusSetter",
+//       reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/marslojiao-mvl/webhook.mvl"],
+//       contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "ci/jenkins/build-status"],
+//       errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+//       statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+//   ]);
+// }
