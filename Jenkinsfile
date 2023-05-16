@@ -1,6 +1,7 @@
 println 'hello world'
 
 node( 'built-in' ) {
+  cleanWs()
   checkout scmGit(
     branches: [[name: '*/main']],
     browser: github('https://github.com/marslojiao-mvl/webhook.mvl'),
