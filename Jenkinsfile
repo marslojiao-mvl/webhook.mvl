@@ -14,6 +14,7 @@ node( 'built-in' ) {
     githubPRComment comment: githubPRMessage( "#${env.BUILD_NUMBER} ${currentBuild.currentResult}" )
     githubPRAddLabels labelProperty: labels( 'SUCCESS' ), statusVerifier: allowRunOnStatus( 'SUCCESS' )
     githubPRClosePublisher statusVerifier: allowRunOnStatus('SUCCESS')
+
   }
 }
 
