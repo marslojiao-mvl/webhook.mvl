@@ -35,43 +35,43 @@ node( 'built-in' ) {
     if ( triggerCause ) { githubPRAddLabels labelProperty: labels( 'ERROR' ) }
   } finally {
     if ( triggerCause ) {
-      // println '>> 1:'
-      // 'SUCCESS' == currentBuild.currentResult
-      //   ? githubPRAddLabels ( labelProperty: labels( 'VERIFIED' ) )
-      //   : githubPRAddLabels ( labelProperty: labels( 'FAILED' ) )
+      println '>> 1:'
+      'SUCCESS' == currentBuild.currentResult
+        ? githubPRAddLabels ( labelProperty: labels( 'VERIFIED' ) )
+        : githubPRAddLabels ( labelProperty: labels( 'FAILED' ) )
 
-      println '>> 2:'
-      githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} ${currentBuild.currentResult} in [${currentBuild.fullDisplayName}](${env.BUILD_URL})" )
+      // println '>> 2:'
+      // githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} ${currentBuild.currentResult} in [${currentBuild.fullDisplayName}](${env.BUILD_URL})" )
 
-      println '>> 3:'
-      setGitHubPullRequestStatus context: "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in ${currentBuild.fullDisplayName}",
-                                 message: "CI build successfully in build ${currentBuild.fullDisplayName} ${BUILD_DISPLAY_NAME}",
-                                 state: 'SUCCESS'
-      println '>> 4:'
-      publishChecks name: 'jenkins', summary: 'jenkins checks', text: 'jenkins', title: 'jenkins'
+      // println '>> 3:'
+      // setGitHubPullRequestStatus context: "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in ${currentBuild.fullDisplayName}",
+                                 // message: "CI build successfully in build ${currentBuild.fullDisplayName} ${BUILD_DISPLAY_NAME}",
+                                 // state: 'SUCCESS'
+      // println '>> 4:'
+      // publishChecks name: 'jenkins', summary: 'jenkins checks', text: 'jenkins', title: 'jenkins'
 
-      println '>> 5:'
-      githubPRStatusPublisher buildMessage: message(failureMsg: githubPRMessage('build failed.'), successMsg: githubPRMessage('build succeeded.')), errorHandler: statusOnPublisherError('FAILURE'), statusMsg: githubPRMessage("Build #${BUILD_NUMBER} ended"), unstableAs: 'FAILURE'
+      // println '>> 5:'
+      // githubPRStatusPublisher buildMessage: message(failureMsg: githubPRMessage('build failed.'), successMsg: githubPRMessage('build succeeded.')), errorHandler: statusOnPublisherError('FAILURE'), statusMsg: githubPRMessage("Build #${BUILD_NUMBER} ended"), unstableAs: 'FAILURE'
 
-      println '>> 6:'
-      step([ $class: 'GitHubCommitStatusSetter',
-             statusResultSource: [
-               $class: 'ConditionalStatusResultSource',
-               results: [
-                          [
-                            $class  : 'BetterThanOrEqualBuildResult',
-                            message : 'passed in ${currentBuild.fullDisplayName}',
-                            result  : 'SUCCESS',
-                            state   : 'SUCCESS'
-                          ],
-                          [
-                            $class  : 'AnyBuildResult',
-                            message : '${currentBuild.fullDisplayName} failed',
-                            state   : 'FAILURE'
-                          ]
-               ]
-             ]
-      ])
+      // println '>> 6:'
+      // step([ $class: 'GitHubCommitStatusSetter',
+             // statusResultSource: [
+               // $class: 'ConditionalStatusResultSource',
+               // results: [
+                          // [
+                            // $class  : 'BetterThanOrEqualBuildResult',
+                            // message : 'passed in ${currentBuild.fullDisplayName}',
+                            // result  : 'SUCCESS',
+                            // state   : 'SUCCESS'
+                          // ],
+                          // [
+                            // $class  : 'AnyBuildResult',
+                            // message : '${currentBuild.fullDisplayName} failed',
+                            // state   : 'FAILURE'
+                          // ]
+               // ]
+             // ]
+      // ])
 
     }
   } // try | finally
