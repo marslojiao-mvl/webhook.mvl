@@ -12,20 +12,16 @@ node( 'built-in' ) {
 
   if ( env?.GITHUB_PR_TARGET_BRANCH ?: false ) {
 
-    gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
-    githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} in build #${env.BUILD_NUMBER} marked as ${currentBuild.currentResult}" +
-                                              "<details><summary>Details</summary><p>[Jenkins Build](${env.BUILD_URL})</p></details>"
-                                            ),
-                    errorHandler: statusOnPublisherError( 'UNSTABLE' )
-
-    githubPRAddLabels errorHandler: statusOnPublisherError( 'UNSTABLE' ), labelProperty: labels( 'verified' )
-
-    githubPRStatusPublisher buildMessage: message( failureMsg: githubPRMessage('Build failed.  (Status set failed.)'),
-                                                   successMsg: githubPRMessage('Build succeeded. (Status set Success.)')
-                                          ),
-                            statusMsg: githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
-    gitHubPRStatus githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
-    setGitHubPullRequestStatus context: "${env.JOB_NAME} #${env.BUILD_NUMBER} passed", message: "CI build successfully in ${env.BUILD_NUMBER}", state: 'SUCCESS'
+    // gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
+    githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} in build #${env.BUILD_NUMBER} marked as ${currentBuild.currentResult}: [Jenkins Build](${env.BUILD_URL})" )
+    githubPRAddLabels labelProperty: labels( 'VERIFIED' )
+    // githubPRStatusPublisher buildMessage: message( failureMsg: githubPRMessage('Build failed.  (Status set failed.)'),
+                                                   // successMsg: githubPRMessage('Build succeeded. (Status set Success.)')
+                                          // ),
+                            // statusMsg: githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
+    setGitHubPullRequestStatus context: "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}",
+                               message: "CI build successfully in ${env.BUILD_NUMBER}",
+                               state: 'SUCCESS'
 
 
     // gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
