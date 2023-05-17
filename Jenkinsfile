@@ -12,20 +12,18 @@ node( 'built-in' ) {
 
   if ( env?.GITHUB_PR_TARGET_BRANCH ?: false ) {
 
-    // gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
-    githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} in build #${env.BUILD_NUMBER} marked as ${currentBuild.currentResult}: [Jenkins Build](${env.BUILD_URL})" )
-    githubPRAddLabels labelProperty: labels( 'VERIFIED' )
-    // githubPRStatusPublisher buildMessage: message( failureMsg: githubPRMessage('Build failed.  (Status set failed.)'),
-                                                   // successMsg: githubPRMessage('Build succeeded. (Status set Success.)')
-                                          // ),
-                            // statusMsg: githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
+    githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} ${currentBuild.currentResult} in [build #${env.BUILD_NUMBER}](${env.BUILD_URL})" )
+    'SUCCESS' == currentBuild.currentResult ?  githubPRAddLabels labelProperty: labels( 'VERIFIED' ) ?  githubPRAddLabels labelProperty: labels( 'FAILED' )
     setGitHubPullRequestStatus context: "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}",
                                message: "CI build successfully in ${env.BUILD_NUMBER}",
                                state: 'SUCCESS'
 
 
     // gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
-    // githubPRComment comment: githubPRMessage( "#${env.BUILD_NUMBER} ${currentBuild.currentResult}" )
+    // githubPRStatusPublisher buildMessage: message( failureMsg: githubPRMessage('Build failed.  (Status set failed.)'),
+                                                   // successMsg: githubPRMessage('Build succeeded. (Status set Success.)')
+                                          // ),
+                            // statusMsg: githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
     // githubPRAddLabels labelProperty: labels( 'SUCCESS' ), statusVerifier: allowRunOnStatus( 'SUCCESS' )
     // githubPRClosePublisher statusVerifier: allowRunOnStatus('SUCCESS')
   }
