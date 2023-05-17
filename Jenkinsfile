@@ -4,7 +4,7 @@ node( 'built-in' ) {
   Boolean isPR = env?.GITHUB_PR_TARGET_BRANCH ?: false
   try {
     cleanWs()
-    // if ( isPR ) { gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" ) }
+    if ( isPR ) { gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" ) }
     checkout scmGit(
       branches: [[name: '*/main']],
       browser: github('https://github.com/marslojiao-mvl/webhook.mvl'),
@@ -15,7 +15,7 @@ node( 'built-in' ) {
     if ( isPR ) {
       String label = 'SUCCESS' == currentBuild.currentResult ? 'VERIFIED' : 'FAILED'
       println ">> label : ${label} <<"
-      githubPRStatusPublisher buildMessage: message(failureMsg: githubPRMessage('Can\'t set status; build failed.'), successMsg: githubPRMessage('Can\'t set status; build succeeded.')), statusMsg: githubPRMessage('CI run ended'), unstableAs: 'SUCCESS'
+      githubPRStatusPublisher buildMessage: message(failureMsg: githubPRMessage('build failed.'), successMsg: githubPRMessage('build succeeded.')), errorHandler: statusOnPublisherError('FAILURE'), statusMsg: githubPRMessage('Build #${BUILD_NUMBER} ended'), unstableAs: 'FAILURE'
       githubPRAddLabels labelProperty: labels( label )
       githubPRRemoveLabels labelProperty: labels('VERIFIED'), statusVerifier: allowRunOnStatus('FAILURE')
       githubPRComment comment: githubPRMessage( "${env.GITHUB_PR_HEAD_SHA} ${currentBuild.currentResult} in [${currentBuild.fullDisplayName}](${env.BUILD_URL})" )
