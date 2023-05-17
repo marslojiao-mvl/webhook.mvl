@@ -25,6 +25,7 @@ node( 'built-in' ) {
                                           ),
                             statusMsg: githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
     gitHubPRStatus githubPRMessage( "PR #${env.GITHUB_PR_NUMBER} ${currentBuild.currentResult} in #${env.BUILD_NUMBER}" )
+    setGitHubPullRequestStatus context: "${env.JOB_NAME} #${env.BUILD_NUMBER} passed", message: "CI build successfully in ${env.BUILD_NUMBER}", state: 'SUCCESS'
 
 
     // gitHubPRStatus githubPRMessage( "${env.GITHUB_PR_COND_REF} run started" )
